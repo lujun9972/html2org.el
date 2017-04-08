@@ -50,10 +50,13 @@
   (let ((shr-external-rendering-functions '((a . html2org-tag-a))))
     (with-temp-buffer
       (shr-insert-document dom)
-      (buffer-string))))
+      (replace-regexp-in-string "^\\*" ",*" (buffer-string)))))
+
+;; (with-current-buffer "*eww*"
+;;   (html2org (eww-current-url) nil :TITLE "title" :TAGS "tag1 tags"))
 
 ;;;###autoload
-(defun html2org (&optional url org-file)
+(defun html2org (&optional url org-file &rest option-plist)
   "Retrive URL and write the content into ORG-FILE with org-mode style links.
 
 This function will return the saved ORG-FILE path"
@@ -64,13 +67,12 @@ This function will return the saved ORG-FILE path"
          (org-file (or org-file (expand-file-name (concat title ".org") html2org-store-dir)))
          (content (html2org-transform-dom dom)))
     (with-temp-file org-file
-      (insert "#+TITLE: " title "\n")
-      (insert "#+URL: " url "\n")
-      (insert "#+AUTHOR: \n")
-      (insert "#+TAGS: \n")
-      (insert "#+DATE: " (format-time-string "[%Y-%m-%d %a %H:%M]" (current-time)) "\n")
-      (insert "#+LANGUAGE:  \n")
-      (insert "#+OPTIONS:  H:6 num:nil toc:t \\n:nil ::t |:t ^:nil -:nil f:t *:t <:nil\n")
+      (while option-plist
+        (let ((option (format "%s" (pop option-plist)))
+              (value (format "%s" (pop option-plist))))
+          (when (string-prefix-p ":" option)
+            (setq option (substring option 1))) ;handler format like :option
+          (insert (format "#+%s: %s\n" option value))))
       (insert content))
     org-file))
 
