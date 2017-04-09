@@ -22,6 +22,12 @@
           (insert (format "[[%s]]" url))
         (insert (format "[[%s][%s]]" url description))))))
 
+(defun html2org-tag-table (dom)
+  (let ((start (point)))
+    (shr-tag-table dom)
+    (org-table-convert-region start (point))
+    (goto-char (point-max))))
+
 (defun html2org-fontize-dom (dom type)
   (unless (or (looking-back "[[:blank:]]")
               (save-excursion
@@ -56,7 +62,8 @@
                                             (i . html2org-tag-i)
                                             (em . html2org-tag-em)
                                             (strong . html2org-tag-strong)
-                                            (u . html2org-tag-u))))
+                                            (u . html2org-tag-u)
+                                            (table . html2org-tag-table))))
     (with-temp-buffer
       (shr-insert-document dom)
       (replace-regexp-in-string "^\\(\\*[[:blank:]]+\\)" ",\\1" (buffer-string)))))
@@ -64,7 +71,7 @@
 
 
 (defun html2org (&optional buf start end replace)
-  "Convert HTML to org text in the BUF between START and END
+  "Convert HTML to org text in the BUF between START and END.
 
 If replace is nil, it just return the converted org content without change the buffer;
 Otherwise, it replace the orgin content with converted org content.
