@@ -63,15 +63,30 @@
 
 
 
-(defun html2org (&optional buf)
-  "Convert HTML to org text in the BUF"
+(defun html2org (&optional buf start end replace)
+  "Convert HTML to org text in the BUF between START and END
+
+If replace is nil, it just return the converted org content without change the buffer;
+Otherwise, it replace the orgin content with converted org content.
+When called interactively, it means do the replacement."
   (interactive)
   (let ((buf (or buf (current-buffer)))
-        (shr-external-rendering-functions '((a . html2org-tag-a))))
+        (shr-external-rendering-functions '((a . html2org-tag-a)))
+        (replace (if (called-interactively-p 'any)
+                     t
+                   replace)))
     (with-current-buffer buf
-      (let ((dom (libxml-parse-html-region (point-min) (point-max))))
-        (erase-buffer)
-        (insert (html2org-transform-dom dom))))))
+      (let* ((start (or start (if (use-region-p)
+                                  (region-beginning)
+                                (point-min))))
+             (end (or end (if (use-region-p)
+                              (region-end)
+                            (point-max))))
+             (dom (libxml-parse-html-region start end))
+             (org-content (html2org-transform-dom dom)))
+        (if replace
+            (setf (buffer-substring start end) org-content)
+          org-content)))))
 
 
 (provide 'html2org)
