@@ -1,4 +1,35 @@
-;; -*- lexical-binding: t; -*-
+;;; html2org.el --- Manage your pocket  -*- lexical-binding: t; -*-
+
+;; Copyright (C) 2017-2018 DarkSun
+
+;; Author: DarkSun <lujun9972@gmail.com>
+;; Created: 2017-4-10
+;; Version: 0.1
+;; Keywords: convenience, html, org
+;; Package-Requires: ((emacs "24.4"))
+
+;; This file is NOT part of GNU Emacs.
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+;;; Source code
+;;
+;; html2org's code can be found here:
+;;   http://github.com/lujun9972/html2org.el
+
+;;; Code:
+
 (require 'dom)
 (require 'shr)
 (require 'subr-x)
@@ -6,7 +37,7 @@
 (defun html2org-tag-a (dom)
   "Convert DOM into org-mode style link."
   (let ((url (dom-attr dom 'href))
-        (title (dom-attr dom 'title))
+        ;; (title (dom-attr dom 'title))
         (text (dom-texts dom))
         (start (point)))
     (when (and shr-target-id
@@ -17,12 +48,14 @@
         (shr-ensure-newline)
         (insert " "))
       (put-text-property start (1+ start) 'shr-target-id shr-target-id))
-    (let ((description (or title text)))
-      (if (string-empty-p (string-trim description))
-          (insert (format "[[%s]]" url))
-        (insert (format "[[%s][%s]]" url description))))))
+    (if (string-empty-p (string-trim text))
+        (insert (format "[[%s]]" url))
+      (insert (format "[[%s][" url))
+      (shr-generic dom)
+      (insert "]]"))))
 
 (defun html2org-tag-table (dom)
+  "Convert DOM into org-mde style table"
   (let ((start (point)))
     (shr-tag-table dom)
     (org-table-convert-region start (point))
@@ -56,7 +89,7 @@
   (html2org-fontize-dom dom "_"))
 
 (defun html2org-transform-dom (dom)
-  "Transform DOM into org file content."
+  "Transform DOM into org format text."
   (let ((shr-external-rendering-functions '((a . html2org-tag-a)
                                             (b . html2org-tag-b)
                                             (i . html2org-tag-i)
@@ -69,7 +102,7 @@
       (replace-regexp-in-string "^\\(\\*[[:blank:]]+\\)" ",\\1" (buffer-string)))))
 
 
-
+;;;###autoload
 (defun html2org (&optional buf start end replace)
   "Convert HTML to org text in the BUF between START and END.
 
@@ -97,3 +130,5 @@ When called interactively, it means do the replacement."
 
 
 (provide 'html2org)
+
+;;; pocket-mode.el ends here
