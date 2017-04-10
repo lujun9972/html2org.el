@@ -46,13 +46,13 @@
       ;; insert...  something.
       (when (= start (point))
         (shr-ensure-newline)
-        (insert " "))
+        (shr-insert " "))
       (put-text-property start (1+ start) 'shr-target-id shr-target-id))
     (if (string-empty-p (string-trim text))
-        (insert (format "[[%s]]" url))
-      (insert (format "[[%s][" url))
+        (shr-insert (format "[[%s]]" url))
+      (shr-insert (format "[[%s][" url))
       (shr-generic dom)
-      (insert "]]"))))
+      (shr-insert "]]"))))
 
 (defun html2org-tag-table (dom)
   "Convert DOM into org-mde style table"
@@ -66,12 +66,12 @@
               (save-excursion
                 (= (point) (progn (beginning-of-line)
                                   (point)))))
-    (insert " "))
-  (insert type)
+    (shr-insert " "))
+  (shr-insert type)
   (shr-generic dom)
-  (insert type)
+  (shr-insert type)
   (unless (looking-at-p "[[:blank:]]")
-    (insert " ")))
+    (shr-insert " ")))
 
 (defun html2org-tag-b (dom)
   (html2org-fontize-dom dom "*"))
