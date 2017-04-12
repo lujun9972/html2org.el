@@ -1,4 +1,4 @@
-;;; html2org.el --- Manage your pocket  -*- lexical-binding: t; -*-
+;;; html2org.el --- Convert html to org format text   -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2017-2018 DarkSun
 
@@ -131,4 +131,4 @@ When called interactively, it means do the replacement."
 
 (provide 'html2org)
 
-;;; pocket-mode.el ends here
+;;; html2org.el ends here
