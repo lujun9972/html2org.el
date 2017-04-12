@@ -28,6 +28,10 @@
 ;; html2org's code can be found here:
 ;;   http://github.com/lujun9972/html2org.el
 
+
+;;; Commentary:
+;; 
+
 ;;; Code:
 
 (require 'dom)
@@ -35,7 +39,7 @@
 (require 'subr-x)
 
 (defun html2org-tag-a (dom)
-  "Convert DOM into org-mode style link."
+  "Convert DOM into ‘org-mode’ style link."
   (let ((url (dom-attr dom 'href))
         ;; (title (dom-attr dom 'title))
         (text (dom-texts dom))
@@ -55,7 +59,7 @@
       (shr-insert "]]"))))
 
 (defun html2org-tag-table (dom)
-  "Convert DOM into org-mde style table"
+  "Convert DOM into org-mde style table."
   (let ((start (point)))
     (shr-tag-table dom)
     (org-table-convert-region start (point))
@@ -106,7 +110,8 @@
 (defun html2org (&optional buf start end replace)
   "Convert HTML to org text in the BUF between START and END.
 
-If replace is nil, it just return the converted org content without change the buffer;
+If REPLACE is nil, it just return the converted org content
+ without change the buffer;
 Otherwise, it replace the orgin content with converted org content.
 When called interactively, it means do the replacement."
   (interactive)
