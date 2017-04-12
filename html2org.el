@@ -66,6 +66,7 @@
     (goto-char (point-max))))
 
 (defun html2org-fontize-dom (dom type)
+  "Fontize the text of DOM in TYPE."
   (unless (or (looking-back "[[:blank:]]")
               (save-excursion
                 (= (point) (progn (beginning-of-line)
@@ -78,18 +79,23 @@
     (shr-insert " ")))
 
 (defun html2org-tag-b (dom)
+  "Convert DOM into org style bold text."
   (html2org-fontize-dom dom "*"))
 
 (defun html2org-tag-i (dom)
+  "Convert DOM into org style italic text."
   (html2org-fontize-dom dom "/"))
 
 (defun html2org-tag-em (dom)
+  "Convert DOM into org style italic text."
   (html2org-fontize-dom dom "/"))
 
 (defun html2org-tag-strong (dom)
+  "Convert DOM into org style bold text."
   (html2org-fontize-dom dom "*"))
 
 (defun html2org-tag-u (dom)
+  "Convert DOM into org style underline text."
   (html2org-fontize-dom dom "_"))
 
 (defun html2org-transform-dom (dom)
