@@ -39,6 +39,7 @@
 (require 'dom)
 (require 'shr)
 (require 'subr-x)
+(require 'org)
 
 (defun html2org-tag-a (dom)
   "Convert DOM into ‘org-mode’ style link."
