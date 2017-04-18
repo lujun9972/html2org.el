@@ -67,7 +67,7 @@
 
 (defun html2org-fontize-dom (dom type)
   "Fontize the text of DOM in TYPE."
-  (unless (or (looking-back "[[:blank:]]")
+  (unless (or (looking-back "[[:blank:]*/_]")
               (save-excursion
                 (= (point) (progn (beginning-of-line)
                                   (point)))))
@@ -111,6 +111,17 @@
       (shr-insert-document dom)
       (replace-regexp-in-string "^\\(\\*[[:blank:]]+\\)" ",\\1" (buffer-string)))))
 
+(defun html2org--shr (start end)
+  (let ((dom (libxml-parse-html-region start end)))
+    (html2org-transform-dom dom)))
+
+(defun html2org--pandoc (start end)
+  (let ((orign-buffer (current-buffer)))
+    (with-temp-buffer
+      (let ((output-buf (current-buffer)))
+        (with-current-buffer orign-buffer
+          (shell-command-on-region start end "pandoc -f html -t org" output-buf)))
+      (buffer-substring-no-properties (point-min) (point-max)))))
 
 ;;;###autoload
 (defun html2org (&optional buf start end replace)
@@ -133,8 +144,9 @@ When called interactively, it means do the replacement."
              (end (or end (if (use-region-p)
                               (region-end)
                             (point-max))))
-             (dom (libxml-parse-html-region start end))
-             (org-content (html2org-transform-dom dom)))
+             (org-content (if (executable-find "pandoc")
+                              (html2org--pandoc start end)
+                            (html2org--shr start end))))
         (if replace
             (setf (buffer-substring start end) org-content)
           org-content)))))
