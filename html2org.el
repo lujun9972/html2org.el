@@ -3,7 +3,9 @@
 ;; Copyright (C) 2017-2018 DarkSun
 
 ;; Author: DarkSun <lujun9972@gmail.com>
+;; URL: http://github.com/lujun9972/html2org.el
 ;; Created: 2017-4-10
+;; Package-Version: 20170412.0
 ;; Version: 0.1
 ;; Keywords: convenience, html, org
 ;; Package-Requires: ((emacs "24.4"))
@@ -37,6 +39,7 @@
 (require 'dom)
 (require 'shr)
 (require 'subr-x)
+(require 'org)
 
 (defun html2org-tag-a (dom)
   "Convert DOM into ‘org-mode’ style link."
